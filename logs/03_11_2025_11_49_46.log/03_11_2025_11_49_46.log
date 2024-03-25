@@ -1,0 +1,10 @@
+[2025-03-11 11:49:47,059] 97 werkzeug - WARNING -  * Debugger is active!
+[2025-03-11 11:49:47,075] 97 werkzeug - INFO -  * Debugger PIN: 115-116-108
+[2025-03-11 11:50:18,291] 27 root - INFO - Loading pickel file of artifacts\model.pkl
+[2025-03-11 11:50:18,815] 27 root - INFO - Loading pickel file of artifacts\preprocessor.pkl
+[2025-03-11 11:50:19,676] 97 werkzeug - INFO - 127.0.0.1 - - [11/Mar/2025 11:50:19] "[35m[1mPOST /predictdata HTTP/1.1[0m" 500 -
+[2025-03-11 11:50:19,810] 97 werkzeug - INFO - 127.0.0.1 - - [11/Mar/2025 11:50:19] "[36mGET /predictdata?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+[2025-03-11 11:50:19,810] 97 werkzeug - INFO - 127.0.0.1 - - [11/Mar/2025 11:50:19] "[36mGET /predictdata?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+[2025-03-11 11:50:19,826] 97 werkzeug - INFO - 127.0.0.1 - - [11/Mar/2025 11:50:19] "GET /predictdata?__debugger__=yes&cmd=resource&f=console.png&s=glgGSvMOlu3TeYXHvxaC HTTP/1.1" 200 -
+[2025-03-11 11:50:19,833] 97 werkzeug - INFO - 127.0.0.1 - - [11/Mar/2025 11:50:19] "[36mGET /predictdata?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+[2025-03-11 11:50:48,396] 97 werkzeug - INFO -  * Detected change in 'D:\\Aastha\\Projects\\Customer_dispute_Segmentation\\customer_segmentation\\pipeline\\predict_pipeline.py', reloading
