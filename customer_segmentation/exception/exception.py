@@ -1,5 +1,5 @@
 import sys
-from customer_segmentation.logging import logger
+from customer_segmentation.logging.logger import logging
 
 
 class CustomerSegmentationException(Exception):

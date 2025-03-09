@@ -1,13 +1,14 @@
 import os
 import sys
-from customer_segmentation.logging import logger
-from customer_segmentation.exception import CustomerSegmentationException
+from customer_segmentation.logging.logger import logging
+from customer_segmentation.exception.exception import CustomerSegmentationException
 from customer_segmentation.utils import save_objects_file
 from dataclasses import dataclass
 import pandas as pd
 import numpy as np
 import time
-import nltk,string
+import nltk
+import string
 nltk.download('stopwords')
 nltk.download('wordnet')
 from nltk import WordNetLemmatizer,PorterStemmer,wordpunct_tokenize
@@ -48,8 +49,8 @@ class CustomFunctionsClass:
         stemmed_data = lemmatized_data.apply(lambda x:stem_text(x))# stemming the lemmatized data
 
         cleaned_data=[" ".join(x) for x in stemmed_data]
-        logger.info("Text preprocessing succesfully done")
-        logger.info("Returnnig preprocessed data")
+        logging.info("Text preprocessing succesfully done")
+        logging.info("Returnnig preprocessed data")
         return cleaned_data
     
     def date_time_function(datetime_data):
@@ -59,40 +60,45 @@ class CustomFunctionsClass:
         return datetime_data['days_held'].values.reshape(-1,1)
 
 @dataclass
-class Data_transformation_config:
-    data_transformation_file=os.path.join('Assets',"Data_Transformation.pkl")# path for stroing pickle file
+class DataTransformationConfig:
+    preprocessor_obj_file_path=os.path.join('artifacts',"preprocessor.pkl")# path for storing pickle file
 
-class DataTransformClass:
-    try:
-        
-        def get_data_transformation(self):
+class DataTransformation:
+    def __init__(self):
+        self.data_transformation_config = DataTransformationConfig()
+     
+    def get_data_transformation_obj(self):
+        """
+        This function is responsible for data transformation
+        """
+        try:
             start=time.time()
-            logger.info("Data transformation started")
+            logging.info("Data transformation started")
             
             Categorical_Column=['Product','Timely response?','Company response to consumer','Submitted via']
             NLP_Column=['Issue']
             Date_Time_Column=['Date sent to company','Date received']
 
-            logger.info("Categorical pipeline initiated")
+            logging.info("Categorical pipeline initiated")
             Cat_pipeline=Pipeline( steps=[ #categorical pipeline
                                          ("Categorical_function",FunctionTransformer(CustomFunctionsClass.cat_function,validate=False))
                                         ,("Categorical_Imputer",SimpleImputer(strategy='most_frequent'))
-                                        ,('Categorical_Onehot',OneHotEncoder(sparse=False,drop='first'))
+                                        ,('Categorical_Onehot',OneHotEncoder(sparse_output=False,drop='first'))
                                         ,("Categorical_Scaler",MinMaxScaler())
                                         ]) 
-            logger.info("Nlp pipeline initiated")
+            logging.info("Nlp pipeline initiated")
             Nlp_pipline=Pipeline( steps=[#NLP pipeline
                                         ("Nlp_extration",FunctionTransformer(CustomFunctionsClass.nlp_function,validate=False))
                                         ,("CountVector",CountVectorizer())
                                         ,("NLP_Scaler",MaxAbsScaler())
                                         ])
-            logger.info("Date_time pipeline initiated")
+            logging.info("Date_time pipeline initiated")
             Date_time_pipeline=Pipeline(steps=[#Datetime pipeline
                                         ("Date_time_transformer",FunctionTransformer(CustomFunctionsClass.date_time_function,validate=False))
                                         ,("Date_time_Scaler",MinMaxScaler())
                                         ])
 
-            logger.info("ColumnTransformer started running pipelines")    
+            logging.info("ColumnTransformer started running pipelines")    
             # Column Transformer for pipeline
             column_preprocessor=ColumnTransformer( 
                                         [
@@ -101,51 +107,66 @@ class DataTransformClass:
                                         ,("Date_time_Transfomer",Date_time_pipeline,Date_Time_Column)
                                         ]
                                         ,remainder='passthrough')# untoched column that are not transformed   
-            logger.info("ColumnTransformer initiated pipelines succesfully") 
+            logging.info("ColumnTransformer initiated pipelines succesfully") 
             end=time.time()
-            logger.info("Data transformation initited succesfully in: {:.2f} seconds".format(end - start))
+            logging.info("Data transformation initited succesfully in: {:.2f} seconds".format(end - start))
             return column_preprocessor
 
-    except Exception as e:
-          logger.error(str(e))
-          raise CustomerSegmentationException(e,sys.exc_info()) 
+        except Exception as e:
+            logging.error(str(e))
+            raise CustomerSegmentationException(e,sys) 
 
-    try:
-        
-        def initiate_data_transformation(self,data_path):
-            start = time.time()
+    def initiate_data_transformation(self, train_path, test_path):
+        try:
+            train_df = pd.read_csv(train_path)
+            test_df = pd.read_csv(test_path)
 
-            logger.info("Data transformation initiated")
-            data_dataframe=pd.read_csv(data_path)
-            logger.info("Dataset successfully stored for transformatiom")
-
-            Column_Preprocessor_Object=self.get_data_transformation()# calling transformer object
+            logging.info("Read train and test data completed")
             
-            Data_features=data_dataframe.drop(columns=['Consumer disputed?'],axis=1)
-            Data_target_feature=data_dataframe['Consumer disputed?']
+            logging.info("Obtaining preprocessing object")
+            preprocessor_obj = self.get_data_transformation_obj()
+            target_column_name = "Consumer disputed?"
 
-            logger.info("Dataset successfully coupled")
+            input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)
+            target_feature_train_df = train_df[target_column_name]
+
+            input_feature_test_df = test_df.drop(columns=[target_column_name], axis=1)
+            target_feature_test_df = test_df[target_column_name]
+
+            logging.info("Applying preprocessor object on the training and testing dataframe.")
+            input_feature_train_arr = preprocessor_obj.fit_transform(input_feature_train_df)
+            input_feature_test_arr = preprocessor_obj.transform(input_feature_test_df)
+            logging.info("Dataset transformation succesfully done transforming our dataset")
+
+            input_feature_train_arr = input_feature_train_arr.toarray()
+            input_feature_test_arr = input_feature_test_arr.toarray()
 
             Label_encoder_object = LabelEncoder()
-            logger.info("Starting column transformation on the dataset")
-            Data_features_attr=Column_Preprocessor_Object.fit_transform(Data_features)
-            
-            end = time.time()
-           
-            logger.info("Dataset transformation succesfully done transforming our dataset in: {:.2f} seconds".format(end - start))
+            logging.info("Applying label encoder on the trainin and testing target feature")
 
-            logger.info("Transforming our target data column")
-            Data_target_attr = Label_encoder_object.fit_transform(Data_target_feature)
-            logger.info("Target column transforming successfully done ")
+            target_feature_train_arr = Label_encoder_object.fit_transform(target_feature_train_df)
+            target_feature_test_arr = Label_encoder_object.transform(target_feature_test_df)
+            logging.info("Target column transforming successfully done.")
 
-            logger.info("Saving the object file")
-            save_objects_file( # saving object and transformation file
-                file_path=Data_transformation_config.data_transformation_file,
-                object=Column_Preprocessor_Object
+            print("Shape of input_feature_train_arr:", input_feature_train_arr.shape)
+            print("Shape of target_feature_train_arr:", target_feature_train_arr.shape)
+
+
+            train_arr = np.c_[input_feature_train_arr, target_feature_train_arr.reshape(-1, 1)]
+            test_arr = np.c_[input_feature_test_arr, target_feature_test_arr.reshape(-1, 1)]
+
+            # Saving the preprocessor pickle file
+            save_objects_file(
+                file_path=self.data_transformation_config.preprocessor_obj_file_path,
+                object=preprocessor_obj
             )
 
-            return(Data_features_attr,Data_target_attr) # returing independent and dependent feature
+            return (train_arr, 
+                    test_arr, 
+                    self.data_transformation_config.preprocessor_obj_file_path)
 
-    except Exception as e:
-          logger.error(str(e))
-          raise CustomerSegmentationException(e,sys.exc_info()) 
+        except Exception as e:
+            logging.error(str(e))
+            raise CustomerSegmentationException(e,sys) 
+
+    
