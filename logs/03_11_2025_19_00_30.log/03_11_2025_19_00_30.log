@@ -1,0 +1,33 @@
+[2025-03-11 19:00:33,293] 29 root - INFO - Entered the data ingestion component
+[2025-03-11 19:00:33,741] 32 root - INFO - Read the Data as a DataFrame
+[2025-03-11 19:00:35,362] 39 root - INFO - Data uploaded in raw data path
+[2025-03-11 19:00:35,412] 43 root - INFO - Data has been split into train test set
+[2025-03-11 19:00:37,005] 48 root - INFO - Ingestion is completed
+[2025-03-11 19:00:37,552] 124 root - INFO - Read train and test data completed
+[2025-03-11 19:00:37,552] 126 root - INFO - Obtaining preprocessing object
+[2025-03-11 19:00:37,552] 76 root - INFO - Data transformation started
+[2025-03-11 19:00:37,552] 82 root - INFO - Categorical pipeline initiated
+[2025-03-11 19:00:37,552] 89 root - INFO - Nlp pipeline initiated
+[2025-03-11 19:00:37,552] 95 root - INFO - Date_time pipeline initiated
+[2025-03-11 19:00:37,552] 101 root - INFO - ColumnTransformer started running pipelines
+[2025-03-11 19:00:37,552] 110 root - INFO - ColumnTransformer initiated pipelines succesfully
+[2025-03-11 19:00:37,552] 112 root - INFO - Data transformation initited succesfully in: 0.00 seconds
+[2025-03-11 19:00:37,568] 136 root - INFO - Applying preprocessor object on the training and testing dataframe.
+[2025-03-11 19:01:18,702] 52 root - INFO - Text preprocessing succesfully done
+[2025-03-11 19:01:18,702] 53 root - INFO - Returnnig preprocessed data
+[2025-03-11 19:01:30,520] 52 root - INFO - Text preprocessing succesfully done
+[2025-03-11 19:01:30,520] 53 root - INFO - Returnnig preprocessed data
+[2025-03-11 19:01:30,990] 139 root - INFO - Dataset transformation succesfully done transforming our dataset
+[2025-03-11 19:01:31,101] 145 root - INFO - Applying label encoder on the trainin and testing target feature
+[2025-03-11 19:01:31,173] 149 root - INFO - Target column transforming successfully done.
+[2025-03-11 19:01:31,459] 16 root - INFO - Object directory initiated
+[2025-03-11 19:01:31,459] 19 root - INFO - File successfuly saved at artifacts\preprocessor.pkl
+[2025-03-11 19:01:31,513] 26 root - INFO - Splitting the training and testing input
+[2025-03-11 19:01:31,513] 45 root - INFO - Starting model evaluations
+[2025-03-11 19:01:31,513] 41 root - INFO - Starting the model fitting and accuracy score calculation
+[2025-03-11 19:30:08,537] 54 root - INFO - Predicted the y test
+[2025-03-11 19:30:08,570] 58 root - INFO - Calculated the accuracy score for Random Forest model
+[2025-03-11 19:30:08,623] 48 root - INFO - Sorting model based on their accuracy score
+[2025-03-11 19:30:08,623] 60 root - INFO - Best model found in both training and test set
+[2025-03-11 19:30:08,623] 16 root - INFO - Object directory initiated
+[2025-03-11 19:30:09,067] 19 root - INFO - File successfuly saved at artifacts\model.pkl

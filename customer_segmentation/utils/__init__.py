@@ -1,36 +1,38 @@
 import os
 import sys
-import pickle
+import dill
 from customer_segmentation.exception.exception import CustomerSegmentationException
 from customer_segmentation.logging.logger import logging
+
 from sklearn.model_selection import GridSearchCV
-
-
 from sklearn.metrics import accuracy_score
 
 
-def save_objects_file(file_path, object):
+def save_object_file(file_path, object):
     try:
         dir_path = os.path.dirname(file_path)
         os.makedirs(dir_path, exist_ok=True)
-        logging.info("Object directory initiated")
-        with open(file_path, "wb") as file_obj:
-            pickle.dump(object, file_obj)
-        logging.info("File successfuly saved at {}".format(file_path))  
+
+        logging.info("Object Directory Initiated")
+        with open(file_path, 'wb') as file_object:
+            dill.dump(object, file_object)
+            logging.info("File successfuly saved at {}".format(file_path))
 
     except Exception as e:
         logging.error(str(e))
-        raise CustomerSegmentationException(e, sys)
+        raise CustomerSegmentationException(e, sys) 
 
-def load_obj_file(file_path):
+
+def load_object(file_path):
     try:
-        logging.info("Loading pickel file of {}".format(file_path))
-        with open(file_path,"rb") as file_object:
-            return pickle.load(file_object)
+        logging.info("Loading pickle file")
+        with open(file_path, 'rb') as file_object:
+            return dill.load(file_object)
         
     except Exception as e:
         logging.error(str(e))
-        raise CustomerSegmentationException(e, sys)   
+        raise CustomerSegmentationException(e, sys)
+  
     
 def evaluate_model(x_train, y_train, x_test, y_test, models, params):
     """
@@ -43,7 +45,7 @@ def evaluate_model(x_train, y_train, x_test, y_test, models, params):
             model = list(models.values())[i]
             param = params[list(models.keys())[i]]
 
-            gs = GridSearchCV(model, param, cv=3)
+            gs = GridSearchCV(model, param, cv=3, verbose=1, n_jobs=-1)
             gs.fit(x_train, y_train)
 
             model.set_params(**gs.best_params_)
@@ -61,9 +63,8 @@ def evaluate_model(x_train, y_train, x_test, y_test, models, params):
 
         return report
 
-
-
     except Exception as e:
         logging.error(str(e))
         raise CustomerSegmentationException(e, sys)
-   
+    
+
