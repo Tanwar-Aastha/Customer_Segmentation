@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -8,8 +9,12 @@ import plotly.express as px
 # Load Dataset
 @st.cache_data
 def load_data():
-    file_path = "D:/Aastha/Projects/final_dispute/dataset/modified_data.csv"  # Update with correct path
-    return pd.read_csv(file_path)
+    # Get the directory where demo.py is located (which is the project root)
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    # Construct the path to the CSV file
+    csv_path = os.path.join(BASE_DIR, "..", "dataset", "modified_data.csv")
+    return pd.read_csv(csv_path)
 
 df = load_data()
 
@@ -18,7 +23,7 @@ st.title("Consumer Complaints Analysis")
 st.write("Explore trends and insights from consumer complaint data.")
 
 df['Date_received'] = pd.to_datetime(df['Date received'], format='%d-%m-%Y')
-df['Received_year'] = pd.to_datetime(df['Date received']).dt.year
+df['Received_year'] = pd.to_datetime(df['Date received'], format='%d-%m-%Y').dt.year
 df['Date sent to company'] = pd.to_datetime(df['Date sent to company'], format='%d-%m-%Y')
 
 

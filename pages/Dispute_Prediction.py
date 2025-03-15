@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 import pandas as pd
 from datetime import date
 from src.pipeline.training_pipeline import PredictPipelineClass, CustomDataClass
@@ -6,7 +7,12 @@ from src.pipeline.training_pipeline import PredictPipelineClass, CustomDataClass
 # Load Data (Assume CSV contains "Product" and "Issue" columns)
 @st.cache_data
 def load_issues():
-    df = pd.read_csv("D:/Aastha/Projects/final_dispute/dataset/modified_data.csv")  # Ensure this CSV exists
+    # Get the directory where demo.py is located (which is the project root)
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    # Construct the path to the CSV file
+    csv_path = os.path.join(BASE_DIR, "..", "dataset", "modified_data.csv")
+    df = pd.read_csv(csv_path)  # Ensure this CSV exists
     return df
 
 issues_df = load_issues()

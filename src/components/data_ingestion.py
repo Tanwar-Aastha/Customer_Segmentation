@@ -23,7 +23,12 @@ class DataIngestion:
 
     def initiate_data_ingestion(self):
         try:
-            df = pd.read_csv('D:/Aastha/Projects/final_dispute/dataset/modified_data.csv')
+            # Get the base directory (project root, not src)
+            BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # This gives 'src/components'
+            PROJECT_ROOT = os.path.dirname(os.path.dirname(BASE_DIR))  # Moves up two levels to project root
+
+            csv_path = os.path.join(PROJECT_ROOT, "dataset", "modified_data.csv")
+            df = pd.read_csv(csv_path)
 
             os.makedirs(os.path.dirname(self.ingestion_config.train_path), exist_ok=True)
             # loading the data into raw data path
