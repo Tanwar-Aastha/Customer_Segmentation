@@ -1,6 +1,6 @@
 venv
-*.pkl
-*.pickle
+# *.pkl
+# *.pickle
 
 # Ignore Python cache files
 __pycache__/
